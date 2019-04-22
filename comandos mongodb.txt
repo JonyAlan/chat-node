@@ -1,0 +1,42 @@
+//link dos comandos 
+https://www.devmedia.com.br/introducao-ao-mongodb/30792
+
+//criar Banco
+use nomeDoBanco
+
+//cria a tabela e insere os dados, aceita dados repetidos.
+db.produtos.insert({cdProduto: 1, nmProduto: "Caderno"});
+db.produtos.insert({cdProduto: 2, nmProduto: "lapis"});
+db.colors.save({name:"red",value:"FF0000"});
+
+
+//lista os dados da tabela
+db.produtos.find();
+db.colors.find();
+db.usuarios.find({ estado: { $eq: "Rio de Janeiro" } })
+db.usuarios.find({ idade: { $gt: 25, $lte: 50 } })//SELECT * FROM usuarios WHERE idade > 25 AND idade <= 50
+db.usuarios.find({ nome: /^Higor/ }) //SELECT * FROM usuarios WHERE nome like "Higor%"
+db.usuarios.find({cidade : "Porto Alegre"}).sort({nome:1}) //SELECT * FROM usuarios WHERE cidade = "Porto Alegre" ORDER BY nome ASC
+db.usuarios.find({cidade : "Porto Alegre"}).sort({nome:-1}) //SELECT * FROM usuarios WHERE cidade = "Porto Alegre" ORDER BY nome desc
+
+
+
+
+
+//insere dados com um for em js
+var chars = "abcdefghijklmnopqrstuvwxyz"
+for(var i =0; i<chars.length; i++) {    
+  ... var char = chars.substr(i, 1);          
+  ... var doc = {char:char, code: char.charCodeAt(0)};
+  ... db.alfabeto.save(doc);
+  ... }
+//delete * from
+db.usuarios.remove( { estado: "Rio Grande do Sul" } )
+//update com where
+db.usuarios.update( { cidade: { $eq:"Rio de Janeiro" } },
+                           $set:   { estado: "Rio de Janeiro"} },
+                           { multi: true }
+  )
+//update equivalente em SQL
+UPDATE usuarios SET estado = "Rio de Janeiro" WHERE cidade = "Rio de Janeiro"
+
