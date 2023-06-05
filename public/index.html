@@ -8,49 +8,108 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+ 
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <form id="chat">
-        <input type="text" name="username" placeholder="Dgite seu usuário">
-        <div class="messages"></div>
-        <input type="text" name="message" placeholder="Digite suas mensagem">
-        <button type="submit">Enviar</button>
-    </form>
 
-        <script type="text/javascript">
-            var socket = io('http://localhost:3000');
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100"> 
+            <div class="col-md-8 col-xl-6 chat">
+                <div class="card">
+                    <div class="card-header msg_head">
+                        <div class="d-flex bd-highlight">
+                            <div class="img_cont">
+                                <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img">
+                                <span class="online_icon"></span>
+                            </div>
+                            <div class="user_info">
+                                <span>Chat Simulados ETEC</span>
+                                <p>1767 Messages</p>
+                            </div> 
+                        </div> 
+                    </div>
+                    <div class="card-body msg_card_body messages">
 
-            function renderMessage(message){
-                $('.messages').append('<div class="message"><strong>'+ message.author + '</strong>: ' + message.message + '</div>');
+                        <div class="d-flex justify-content-end mb-4 mt-2">
+                            <div class="msg_cotainer_send">
+                                Ok, thank you have a good day
+                                <span class="msg_time_send">9:10 AM, Today</span>
+                            </div>
+                            <div class="img_cont_msg">
+                                <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img_msg">
+                        </div>
+                        </div> 
+                    </div>
+                    <div class="card-footer">
+                        <div class="input-group" > 
+                            <input name="message" class="form-control type_msg" placeholder="Type your message..."/>
+                            <div class="input-group-append" > 
+                                <span id="chat" type="submit" class="input-group-text send_btn">
+                                    <i class="fas fa-location-arrow"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+    <script type="text/javascript">
+        var socket = io('http://localhost:3002');
+
+        function renderMessage(message){
+            $('.messages').append(`
+            <div class="d-flex justify-content-start mb-4 mt-2">
+                <div class="img_cont_msg">
+                    <img src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle user_img_msg">
+                </div>
+                <div class="msg_cotainer">
+                    ${message.message}
+                    <span class="msg_time">9:12 AM, ${message.author}</span>
+                </div>      
+            </div>
+            
+            ` );
+        }
+
+        socket.on('previousMessages', function(messages){
+            for(message of messages){
+                renderMessage(message);
+            }
+        });
+
+        socket.on('receivedMessage', function(message){
+            renderMessage(message);
+        });
+
+        $('#chat').click(function(){
+            console.log("🚀 ~ file: index.html:98 ~ $ ~ event:", event)
+         
+            var author = 'Jhow';
+            var message = $('input[name=message]').val();
+
+            if(author.length && message.length){
+                var messageObject = {
+                    author: author,
+                    message: message,
+                };
+                renderMessage(messageObject);
+                socket.emit('sendMessage', messageObject);
             }
 
-            socket.on('previousMessages', function(messages){
-                for(message of messages){
-                    renderMessage(message);
-                }
-            });
-
-            socket.on('receivedMessage', function(message){
-                renderMessage(message);
-            });
-
-            $('#chat').submit(function(event){
-                event.preventDefault();
-
-                var author = $('input[name=username').val();
-                var message = $('input[name=message]').val();
-
-                if(author.length && message.length){
-                    var messageObject = {
-                        author: author,
-                        message: message,
-                    };
-                    renderMessage(messageObject);
-                    socket.emit('sendMessage', messageObject);
-                }
-
-            });
-        </script>
+        });
+    
+    </script>
 </body>
 </html>
